@@ -5,7 +5,8 @@ NeuralScale is a portfolio-ready cyber threat intelligence platform built to dem
 The project simulates a lightweight Security Operations Center (SOC) workflow that ingests threat events in real time, processes them, stores structured relationships in a graph database, and exposes the data through an API and a static demo interface.
 
 ---
-
+![Architecture Diagram](docs/image.png)
+---
 ## 🎯 Project Goal
 
 The goal of NeuralScale is to show the design and implementation of:
