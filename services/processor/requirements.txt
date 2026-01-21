@@ -1,0 +1,7 @@
+pydantic==2.8.2
+aiokafka==0.11.0
+neo4j==5.23.0
+psycopg[binary]==3.2.1
+transformers==4.43.3
+torch==2.3.1
+

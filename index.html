@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NeuralScale — Cyber Threat MVP</title>
+  <meta name="description" content="A fast, static cyber threat MVP: event feed + graph pivots." />
+  <style>
+    :root { --bg:#0b0f17; --panel:#111827; --muted:#94a3b8; --text:#e5e7eb; --line:#243041; --accent:#38bdf8; }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--bg); color:var(--text); }
+    a{ color:var(--accent); text-decoration:none; }
+    .topbar{ position:sticky; top:0; z-index:10; background:rgba(11,15,23,.9); backdrop-filter: blur(8px); border-bottom:1px solid var(--line); }
+    .wrap{ max-width:1200px; margin:0 auto; padding:16px; }
+    .title{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+    .title h1{ font-size:18px; margin:0; letter-spacing:.3px; }
+    .title .pill{ font-size:12px; color:#0b0f17; background:var(--accent); padding:2px 8px; border-radius:999px; font-weight:600; }
+    .sub{ margin-top:6px; color:var(--muted); font-size:13px; line-height:1.4; }
+    .grid{ display:grid; grid-template-columns: 1.2fr .9fr; gap:12px; align-items:start; }
+    @media (max-width: 980px){ .grid{ grid-template-columns:1fr; } }
+    .panel{ background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+    .panelHead{ padding:12px 12px 10px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:10px; align-items:center; }
+    .panelHead h2{ font-size:13px; margin:0; color:#cbd5e1; font-weight:700; letter-spacing:.3px; text-transform:uppercase; }
+    .tools{ display:flex; gap:8px; flex-wrap:wrap; }
+    .input, .select{ background:#0b1220; border:1px solid #243041; color:var(--text); padding:8px 10px; border-radius:10px; font-size:13px; outline:none; }
+    .input{ min-width:220px; }
+    .btn{ background:#0b1220; border:1px solid #243041; color:var(--text); padding:8px 10px; border-radius:10px; font-size:13px; cursor:pointer; }
+    .btn:hover{ border-color:#3b4a63; }
+    .btn.primary{ border-color: rgba(56,189,248,.6); }
+    .list{ max-height:70vh; overflow:auto; }
+    .row{ padding:12px; border-bottom:1px solid var(--line); cursor:pointer; display:flex; gap:10px; }
+    .row:hover{ background:rgba(148,163,184,.06); }
+    .row.active{ outline:1px solid rgba(56,189,248,.45); background:rgba(56,189,248,.07); }
+    .meta{ min-width:110px; }
+    .ts{ font-size:12px; color:var(--muted); }
+    .badge{ display:inline-block; margin-top:6px; font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid #2b3a52; color:#cbd5e1; }
+    .content{ flex:1; min-width:0; }
+    .headline{ font-size:14px; font-weight:700; margin:0 0 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .desc{ font-size:13px; color:#cbd5e1; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .kv{ display:grid; grid-template-columns: 120px 1fr; gap:8px 10px; padding:12px; font-size:13px; }
+    .k{ color:var(--muted); }
+    .v{ color:var(--text); overflow-wrap:anywhere; }
+    .chips{ display:flex; gap:8px; flex-wrap:wrap; padding:0 12px 12px; }
+    .chip{ font-size:12px; border:1px solid #2b3a52; background:#0b1220; padding:6px 10px; border-radius:999px; cursor:pointer; }
+    .chip:hover{ border-color:#3b4a63; }
+    .split{ display:grid; grid-template-columns:1fr; gap:12px; }
+    .graphWrap{ padding:12px; }
+    canvas{ width:100%; height:420px; background:#0b1220; border:1px solid #243041; border-radius:12px; display:block; }
+    .hint{ padding:0 12px 12px; font-size:12px; color:var(--muted); line-height:1.35; }
+    .footer{ padding:10px 12px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .ok{ color:#86efac; }
+    .warn{ color:#fbbf24; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="title">
+        <h1>NeuralScale — Cyber Threat MVP</h1>
+        <span class="pill">Static Demo</span>
+      </div>
+      <div class="sub">
+        Fast portfolio build: event feed + pivots + lightweight graph. Data loads from <code>demo/events.json</code> and <code>demo/graph.json</code>.
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+      <!-- LEFT: Event feed -->
+      <div class="panel">
+        <div class="panelHead">
+          <h2>Threat Feed</h2>
+          <div class="tools">
+            <input id="q" class="input" placeholder="Search (id, msg, actor, ip, tactic, country)..." />
+            <select id="typeFilter" class="select">
+              <option value="">All types</option>
+            </select>
+            <button id="reset" class="btn">Reset</button>
+            <button id="reload" class="btn primary">Reload</button>
+          </div>
+        </div>
+        <div id="list" class="list"></div>
+        <div class="footer">
+          <div id="status">Loading…</div>
+          <div>Tip: click an event → pivot by actor/ip/tactic</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Details + Graph -->
+      <div class="split">
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Event Details</h2>
+            <div class="tools">
+              <button id="pivotActor" class="btn" disabled>Pivot Actor</button>
+              <button id="pivotIp" class="btn" disabled>Pivot IP</button>
+              <button id="pivotTactic" class="btn" disabled>Pivot Tactic</button>
+              <button id="clearPivot" class="btn" disabled>Clear Pivot</button>
+            </div>
+          </div>
+          <div id="details" class="kv"></div>
+          <div class="chips" id="chips"></div>
+          <div class="hint">
+            This UI is static, but mirrors your real pipeline: Kafka → Processor → Neo4j.
+            For the portfolio, we ship demo data so the page is instant on GitHub Pages.
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <h2>Graph</h2>
+            <div class="tools">
+              <button id="center" class="btn">Center</button>
+              <button id="neighbors" class="btn" disabled>Show Neighbors</button>
+            </div>
+          </div>
+          <div class="graphWrap">
+            <canvas id="graph" width="1200" height="600"></canvas>
+          </div>
+          <div class="hint">
+            Click nodes to select. “Show Neighbors” highlights related nodes for the selected event/actor/ip.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+/** --------- State --------- **/
+let ALL_EVENTS = [];
+let VIEW_EVENTS = [];
+let GRAPH = { nodes: [], links: [] };
+let ACTIVE_ID = null;
+
+let PIVOT = { field: null, value: null }; // e.g. {field:"actor", value:"APT-29"}
+
+const el = (id) => document.getElementById(id);
+const listEl = el("list");
+const statusEl = el("status");
+const qEl = el("q");
+const typeFilterEl = el("typeFilter");
+
+const detailsEl = el("details");
+const chipsEl = el("chips");
+const pivotActorBtn = el("pivotActor");
+const pivotIpBtn = el("pivotIp");
+const pivotTacticBtn = el("pivotTactic");
+const clearPivotBtn = el("clearPivot");
+const neighborsBtn = el("neighbors");
+
+/** --------- Helpers --------- **/
+function fmtTs(ts){
+  if(!ts) return "";
+  try { return new Date(ts).toISOString().replace(".000Z","Z"); } catch { return ts; }
+}
+function textOf(e){
+  return [
+    e.event_id, e.id, e.ts, e.type, e.msg, e.text, e.title,
+    e.actor, e.ip, e.tactic, e.country, e.channel, e.merchant
+  ].filter(Boolean).join(" ").toLowerCase();
+}
+function eventId(e){ return e.event_id || e.id; }
+
+function setStatus(msg, kind){
+  statusEl.textContent = msg;
+  statusEl.className = kind === "ok" ? "ok" : kind === "warn" ? "warn" : "";
+}
+
+/** --------- Load data --------- **/
+async function loadAll(){
+  setStatus("Loading…");
+  const [eventsRes, graphRes] = await Promise.all([
+    fetch("demo/events.json", { cache: "no-store" }),
+    fetch("demo/graph.json",  { cache: "no-store" })
+  ]);
+  if(!eventsRes.ok) throw new Error("Failed to load demo/events.json");
+  if(!graphRes.ok) throw new Error("Failed to load demo/graph.json");
+
+  ALL_EVENTS = await eventsRes.json();
+  GRAPH = await graphRes.json();
+
+  hydrateTypeFilter();
+  applyFilters();
+  if(VIEW_EVENTS.length) selectEvent(eventId(VIEW_EVENTS[0]));
+  setStatus(`Loaded ${ALL_EVENTS.length} events`, "ok");
+
+  initGraph();
+}
+
+/** --------- UI: Filters --------- **/
+function hydrateTypeFilter(){
+  const types = new Set();
+  for(const e of ALL_EVENTS){
+    const t = e.type || e.source;
+    if(t) types.add(t);
+  }
+  const sorted = [...types].sort();
+  typeFilterEl.innerHTML = `<option value="">All types</option>` + sorted.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+}
+
+function applyFilters(){
+  const q = (qEl.value || "").trim().toLowerCase();
+  const t = (typeFilterEl.value || "").trim();
+
+  VIEW_EVENTS = ALL_EVENTS.filter(e => {
+    if(PIVOT.field && PIVOT.value){
+      if((e[PIVOT.field] || "") !== PIVOT.value && !(
+        PIVOT.field === "event_id" && (e.event_id || e.id) === PIVOT.value
+      )) return false;
+    }
+    if(t){
+      const et = e.type || e.source;
+      if(et !== t) return false;
+    }
+    if(q){
+      if(!textOf(e).includes(q)) return false;
+    }
+    return true;
+  });
+
+  renderList();
+}
+
+/** --------- UI: List --------- **/
+function renderList(){
+  listEl.innerHTML = "";
+  if(!VIEW_EVENTS.length){
+    const empty = document.createElement("div");
+    empty.style.padding = "12px";
+    empty.style.color = "var(--muted)";
+    empty.textContent = "No events match your filters.";
+    listEl.appendChild(empty);
+    return;
+  }
+
+  for(const e of VIEW_EVENTS){
+    const id = eventId(e);
+    const row = document.createElement("div");
+    row.className = "row" + (id === ACTIVE_ID ? " active" : "");
+    row.onclick = () => selectEvent(id);
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.innerHTML = `<div class="ts">${escapeHtml(fmtTs(e.ts))}</div>
+                      <div class="badge">${escapeHtml(e.type || e.source || "event")}</div>`;
+
+    const content = document.createElement("div");
+    content.className = "content";
+    const headline = (e.msg || e.title || e.text || "").toString();
+    content.innerHTML = `<p class="headline">${escapeHtml(id || "unknown-id")}</p>
+                         <p class="desc">${escapeHtml(headline || "(no message)")}</p>`;
+
+    row.appendChild(meta);
+    row.appendChild(content);
+    listEl.appendChild(row);
+  }
+}
+
+/** --------- UI: Details + pivots --------- **/
+function selectEvent(id){
+  ACTIVE_ID = id;
+  renderList();
+  const e = ALL_EVENTS.find(x => eventId(x) === id);
+  if(!e) return;
+
+  const rows = [
+    ["event_id", eventId(e)],
+    ["ts", fmtTs(e.ts)],
+    ["type", e.type || e.source],
+    ["msg", e.msg || e.text || e.title],
+    ["actor", e.actor],
+    ["ip", e.ip],
+    ["tactic", e.tactic],
+    ["country", e.country],
+    ["channel", e.channel],
+    ["score", e.score],
+    ["label", e.label],
+    ["url", e.url],
+  ].filter(([k,v]) => v !== undefined && v !== null && v !== "");
+
+  detailsEl.innerHTML = rows.map(([k,v]) => `
+    <div class="k">${escapeHtml(k)}</div>
+    <div class="v">${k === "url" ? `<a href="${escapeAttr(v)}" target="_blank" rel="noreferrer">${escapeHtml(v)}</a>` : escapeHtml(String(v))}</div>
+  `).join("");
+
+  // chips
+  chipsEl.innerHTML = "";
+  const chips = [
+    e.actor ? ["actor", e.actor] : null,
+    e.ip ? ["ip", e.ip] : null,
+    e.tactic ? ["tactic", e.tactic] : null,
+    (e.country && e.country !== "unknown") ? ["country", e.country] : null,
+    (e.channel && e.channel !== "unknown") ? ["channel", e.channel] : null,
+  ].filter(Boolean);
+
+  for(const [field, value] of chips){
+    const c = document.createElement("div");
+    c.className = "chip";
+    c.textContent = `Pivot ${field}: ${value}`;
+    c.onclick = () => setPivot(field, value);
+    chipsEl.appendChild(c);
+  }
+
+  // pivot buttons
+  pivotActorBtn.disabled = !e.actor;
+  pivotIpBtn.disabled = !e.ip;
+  pivotTacticBtn.disabled = !e.tactic;
+  clearPivotBtn.disabled = !(PIVOT.field && PIVOT.value);
+
+  pivotActorBtn.onclick = () => setPivot("actor", e.actor);
+  pivotIpBtn.onclick = () => setPivot("ip", e.ip);
+  pivotTacticBtn.onclick = () => setPivot("tactic", e.tactic);
+  clearPivotBtn.onclick = () => clearPivot();
+
+  // graph selection
+  selectGraphNode("event:" + id);
+}
+
+function setPivot(field, value){
+  PIVOT = { field, value };
+  setStatus(`Pivot: ${field} = ${value}`, "ok");
+  clearPivotBtn.disabled = false;
+  applyFilters();
+  if(VIEW_EVENTS.length) selectEvent(eventId(VIEW_EVENTS[0]));
+}
+function clearPivot(){
+  PIVOT = { field: null, value: null };
+  setStatus(`Loaded ${ALL_EVENTS.length} events`, "ok");
+  applyFilters();
+  clearPivotBtn.disabled = true;
+}
+
+/** --------- Minimal Graph (canvas) --------- **/
+let ctx, canvas;
+let positions = new Map(); // nodeId -> {x,y}
+let selectedNode = null;
+let highlight = new Set();
+
+function initGraph(){
+  canvas = el("graph");
+  ctx = canvas.getContext("2d");
+
+  // initial random layout (fast + good enough for MVP)
+  positions.clear();
+  const w = canvas.width, h = canvas.height;
+  for(const n of GRAPH.nodes){
+    positions.set(n.id, { x: Math.random()*w, y: Math.random()*h });
+  }
+
+  // a few cheap relaxation steps
+  for(let i=0;i<150;i++) stepLayout();
+
+  canvas.addEventListener("click", onGraphClick);
+  el("center").onclick = () => { for(let i=0;i<120;i++) stepLayout(); drawGraph(); };
+  neighborsBtn.onclick = () => {
+    if(!selectedNode) return;
+    highlightNeighbors(selectedNode);
+    drawGraph();
+  };
+
+  drawGraph();
+}
+
+function stepLayout(){
+  const w = canvas.width, h = canvas.height;
+  const repulse = 1400;
+  const spring = 0.002;
+
+  // repulsion (sampled for speed)
+  const nodes = GRAPH.nodes;
+  for(let i=0;i<nodes.length;i++){
+    const a = nodes[i].id;
+    const pa = positions.get(a);
+    for(let j=i+1;j<nodes.length;j++){
+      if((i+j) % 3 !== 0) continue; // sample
+      const b = nodes[j].id;
+      const pb = positions.get(b);
+      let dx = pa.x - pb.x, dy = pa.y - pb.y;
+      const d2 = dx*dx + dy*dy + 0.01;
+      const f = repulse / d2;
+      pa.x += (dx/Math.sqrt(d2))*f;
+      pa.y += (dy/Math.sqrt(d2))*f;
+      pb.x -= (dx/Math.sqrt(d2))*f;
+      pb.y -= (dy/Math.sqrt(d2))*f;
+    }
+  }
+
+  // attraction along links
+  for(const l of GRAPH.links){
+    const ps = positions.get(l.source);
+    const pt = positions.get(l.target);
+    if(!ps || !pt) continue;
+    const dx = pt.x - ps.x;
+    const dy = pt.y - ps.y;
+    ps.x += dx * spring;
+    ps.y += dy * spring;
+    pt.x -= dx * spring;
+    pt.y -= dy * spring;
+  }
+
+  // keep in bounds
+  for(const n of nodes){
+    const p = positions.get(n.id);
+    p.x = Math.max(20, Math.min(w-20, p.x));
+    p.y = Math.max(20, Math.min(h-20, p.y));
+  }
+}
+
+function drawGraph(){
+  if(!ctx) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // links
+  ctx.globalAlpha = 0.65;
+  for(const l of GRAPH.links){
+    const a = positions.get(l.source), b = positions.get(l.target);
+    if(!a || !b) continue;
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#243041";
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  // nodes
+  for(const n of GRAPH.nodes){
+    const p = positions.get(n.id);
+    const isSel = selectedNode === n.id;
+    const isHi = highlight.has(n.id);
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, isSel ? 8 : 6, 0, Math.PI*2);
+
+    let fill = "#94a3b8";
+    if(n.type === "event") fill = "#38bdf8";
+    if(n.type === "actor") fill = "#a78bfa";
+    if(n.type === "ip")    fill = "#fbbf24";
+    if(isHi) fill = "#86efac";
+    if(isSel) fill = "#e5e7eb";
+
+    ctx.fillStyle = fill;
+    ctx.fill();
+
+    // label for selected / highlighted
+    if(isSel || isHi){
+      ctx.font = "12px ui-sans-serif, system-ui";
+      ctx.fillStyle = "#e5e7eb";
+      ctx.fillText(n.label, p.x + 10, p.y - 10);
+    }
+  }
+
+  neighborsBtn.disabled = !selectedNode;
+}
+
+function pickNode(x,y){
+  let best = null, bestD = 999999;
+  for(const n of GRAPH.nodes){
+    const p = positions.get(n.id);
+    const dx = p.x - x, dy = p.y - y;
+    const d = dx*dx + dy*dy;
+    if(d < bestD){
+      bestD = d;
+      best = n.id;
+    }
+  }
+  return bestD <= 14*14 ? best : null;
+}
+
+function onGraphClick(evt){
+  const rect = canvas.getBoundingClientRect();
+  const x = (evt.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (evt.clientY - rect.top)  * (canvas.height / rect.height);
+  const id = pickNode(x,y);
+  if(!id) return;
+
+  selectedNode = id;
+  highlight.clear();
+
+  // if it's an event node, sync selection to list/details
+  if(id.startsWith("event:")){
+    const eid = id.slice("event:".length);
+    selectEvent(eid);
+  } else {
+    drawGraph();
+  }
+}
+
+function selectGraphNode(nodeId){
+  selectedNode = nodeId;
+  highlight.clear();
+  drawGraph();
+}
+
+function highlightNeighbors(nodeId){
+  highlight.clear();
+  highlight.add(nodeId);
+  for(const l of GRAPH.links){
+    if(l.source === nodeId) highlight.add(l.target);
+    if(l.target === nodeId) highlight.add(l.source);
+  }
+}
+
+/** --------- Security-safe escaping --------- **/
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function escapeAttr(s){
+  return String(s).replace(/"/g, "&quot;");
+}
+
+/** --------- Events --------- **/
+qEl.addEventListener("input", () => applyFilters());
+typeFilterEl.addEventListener("change", () => applyFilters());
+el("reset").addEventListener("click", () => { qEl.value=""; typeFilterEl.value=""; clearPivot(); });
+el("reload").addEventListener("click", async () => {
+  try { await loadAll(); } catch(e){ console.error(e); setStatus(e.message, "warn"); }
+});
+
+loadAll().catch(e => { console.error(e); setStatus(e.message, "warn"); });
+</script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+{
+  "nodes": [
+    {
+      "id": "actor:unknown",
+      "label": "unknown",
+      "type": "actor"
+    },
+    {
+      "id": "event:evt-0015",
+      "label": "evt-0015",
+      "type": "event",
+      "ts": "2026-01-21T00:55:11Z",
+      "event_type": "login_abuse",
+      "score": 0.74,
+      "tactic": "credential_access",
+      "country": "US",
+      "channel": "web",
+      "msg": "Successful login after spray from same source IP"
+    },
+    {
+      "id": "ip:203.0.113.77",
+      "label": "203.0.113.77",
+      "type": "ip"
+    },
+    {
+      "id": "actor:APT29",
+      "label": "APT29",
+      "type": "actor"
+    },
+    {
+      "id": "event:evt-0014",
+      "label": "evt-0014",
+      "type": "event",
+      "ts": "2026-01-21T00:47:27Z",
+      "event_type": "malware",
+      "score": 0.9,
+      "tactic": "persistence",
+      "country": "DE",
+      "channel": "endpoint",
+      "msg": "Suspicious scheduled task created on workstation"
+    },
+    {
+      "id": "ip:91.214.124.143",
+      "label": "91.214.124.143",
+      "type": "ip"
+    },
+    {
+      "id": "actor:FIN7",
+      "label": "FIN7",
+      "type": "actor"
+    },
+    {
+      "id": "event:evt-0013",
+      "label": "evt-0013",
+      "type": "event",
+      "ts": "2026-01-21T00:41:02Z",
+      "event_type": "phishing",
+      "score": 0.79,
+      "tactic": "initial_access",
+      "country": "AT",
+      "channel": "email",
+      "msg": "CEO fraud style lure targeting payroll team"
+    },
+    {
+      "id": "ip:185.220.101.12",
+      "label": "185.220.101.12",
+      "type": "ip"
+    },
+    {
+      "id": "event:evt-0012",
+      "label": "evt-0012",
+      "type": "event",
+      "ts": "2026-01-21T00:34:49Z",
+      "event_type": "recon",
+      "score": 0.55,
+      "tactic": "reconnaissance",
+      "country": "GB",
+      "channel": "api",
+      "msg": "Repeated requests to /graphql with introspection enabled"
+    },
+    {
+      "id": "ip:198.51.100.44",
+      "label": "198.51.100.44",
+      "type": "ip"
+    },
+    {
+      "id": "event:evt-0011",
+      "label": "evt-0011",
+      "type": "event",
+      "ts": "2026-01-21T00:31:18Z",
+      "event_type": "fraud",
+      "score": 0.61,
+      "tactic": "impact",
+      "country": "GB",
+      "channel": "web",
+      "msg": "High-value checkout attempt from new geo + device"
+    },
+    {
+      "id": "event:evt-0010",
+      "label": "evt-0010",
+      "type": "event",
+      "ts": "2026-01-21T00:28:32Z",
+      "event_type": "malware",
+      "score": 0.86,
+      "tactic": "exfiltration",
+      "country": "AT",
+      "channel": "dns",
+      "msg": "DNS tunneling suspected via high-entropy subdomains"
+    },
+    {
+      "id": "event:evt-0009",
+      "label": "evt-0009",
+      "type": "event",
+      "ts": "2026-01-21T00:23:05Z",
+      "event_type": "recon",
+      "score": 0.67,
+      "tactic": "reconnaissance",
+      "country": "US",
+      "channel": "web",
+      "msg": "Directory traversal probes against /../ and /etc/passwd"
+    },
+    {
+      "id": "event:evt-0008",
+      "label": "evt-0008",
+      "type": "event",
+      "ts": "2026-01-21T00:22:11Z",
+      "event_type": "login_abuse",
+      "score": 0.7,
+      "tactic": "credential_access",
+      "country": "US",
+      "channel": "web",
+      "msg": "Password spray detected across 40 accounts"
+    },
+    {
+      "id": "event:evt-0007",
+      "label": "evt-0007",
+      "type": "event",
+      "ts": "2026-01-21T00:17:40Z",
+      "event_type": "malware",
+      "score": 0.93,
+      "tactic": "execution",
+      "country": "DE",
+      "channel": "endpoint",
+      "msg": "PowerShell encoded command spawned by Office macro"
+    },
+    {
+      "id": "event:evt-0006",
+      "label": "evt-0006",
+      "type": "event",
+      "ts": "2026-01-21T00:14:09Z",
+      "event_type": "phishing",
+      "score": 0.88,
+      "tactic": "initial_access",
+      "country": "DE",
+      "channel": "email",
+      "msg": "Lookalike domain observed: 'm1crosoft-secure-login[.]com'"
+    },
+    {
+      "id": "event:evt-0005",
+      "label": "evt-0005",
+      "type": "event",
+      "ts": "2026-01-21T00:11:21Z",
+      "event_type": "fraud",
+      "score": 0.58,
+      "tactic": "impact",
+      "country": "NL",
+      "channel": "api",
+      "msg": "Unusual card-not-present attempt with new device fingerprint"
+    },
+    {
+      "id": "ip:45.155.205.31",
+      "label": "45.155.205.31",
+      "type": "ip"
+    },
+    {
+      "id": "event:evt-0004",
+      "label": "evt-0004",
+      "type": "event",
+      "ts": "2026-01-21T00:09:55Z",
+      "event_type": "recon",
+      "score": 0.64,
+      "tactic": "reconnaissance",
+      "country": "NL",
+      "channel": "web",
+      "msg": "High-rate scans against /api/auth and /wp-login.php"
+    },
+    {
+      "id": "event:evt-0003",
+      "label": "evt-0003",
+      "type": "event",
+      "ts": "2026-01-21T00:08:03Z",
+      "event_type": "malware",
+      "score": 0.91,
+      "tactic": "command_and_control",
+      "country": "DE",
+      "channel": "endpoint",
+      "msg": "Endpoint flagged possible beaconing to rare ASN"
+    },
+    {
+      "id": "event:evt-0002",
+      "label": "evt-0002",
+      "type": "event",
+      "ts": "2026-01-21T00:06:42Z",
+      "event_type": "login_abuse",
+      "score": 0.77,
+      "tactic": "credential_access",
+      "country": "AT",
+      "channel": "web",
+      "msg": "Multiple failed MFA attempts for admin account"
+    },
+    {
+      "id": "event:evt-0001",
+      "label": "evt-0001",
+      "type": "event",
+      "ts": "2026-01-21T00:05:10Z",
+      "event_type": "phishing",
+      "score": 0.82,
+      "tactic": "initial_access",
+      "country": "AT",
+      "channel": "email",
+      "msg": "Suspicious login link sent to finance inbox"
+    }
+  ],
+  "links": [
+    {
+      "source": "actor:unknown",
+      "target": "event:evt-0015",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0015",
+      "target": "ip:203.0.113.77",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:APT29",
+      "target": "event:evt-0014",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0014",
+      "target": "ip:91.214.124.143",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:FIN7",
+      "target": "event:evt-0013",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0013",
+      "target": "ip:185.220.101.12",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:unknown",
+      "target": "event:evt-0012",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0012",
+      "target": "ip:198.51.100.44",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:unknown",
+      "target": "event:evt-0011",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0011",
+      "target": "ip:198.51.100.44",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:FIN7",
+      "target": "event:evt-0010",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0010",
+      "target": "ip:185.220.101.12",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:unknown",
+      "target": "event:evt-0009",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0009",
+      "target": "ip:203.0.113.77",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:unknown",
+      "target": "event:evt-0008",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0008",
+      "target": "ip:203.0.113.77",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:APT29",
+      "target": "event:evt-0007",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0007",
+      "target": "ip:91.214.124.143",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:APT29",
+      "target": "event:evt-0006",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0006",
+      "target": "ip:91.214.124.143",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:unknown",
+      "target": "event:evt-0005",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0005",
+      "target": "ip:45.155.205.31",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:unknown",
+      "target": "event:evt-0004",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0004",
+      "target": "ip:45.155.205.31",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:APT29",
+      "target": "event:evt-0003",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0003",
+      "target": "ip:91.214.124.143",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:FIN7",
+      "target": "event:evt-0002",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0002",
+      "target": "ip:185.220.101.12",
+      "type": "TARGETED"
+    },
+    {
+      "source": "actor:FIN7",
+      "target": "event:evt-0001",
+      "type": "GENERATED"
+    },
+    {
+      "source": "event:evt-0001",
+      "target": "ip:185.220.101.12",
+      "type": "TARGETED"
+    }
+  ]
+}
