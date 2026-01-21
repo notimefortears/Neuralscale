@@ -231,7 +231,7 @@ Potential extensions:
 
 ---
 
-# 👤 Author
+# 👤 Andre M.
 
 Built as a personal portfolio project to demonstrate backend engineering, data pipelines, and graph analytics skills.
 
