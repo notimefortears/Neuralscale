@@ -1,6 +1,6 @@
 # NeuralScale – Cyber Threat Intelligence MVP
 
-NeuralScale is a portfolio-ready cyber threat intelligence platform built to demonstrate a modern event-driven analytics pipeline using Kafka (Redpanda), Python, Neo4j, and FastAPI.
+NeuralScale is a portfolio cyber threat intelligence platform built to demonstrate a modern event-driven analytics pipeline using Kafka (Redpanda), Python, Neo4j, and FastAPI.
 
 The project simulates a lightweight Security Operations Center (SOC) workflow that ingests threat events in real time, processes them, stores structured relationships in a graph database, and exposes the data through an API and a static demo interface.
 
