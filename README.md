@@ -7,7 +7,7 @@ The project simulates a lightweight Security Operations Center (SOC) workflow th
 ---
 ![Architecture Diagram](docs/image.png)
 ---
-## 🎯 Project Goal
+## Project Goal
 
 The goal of NeuralScale is to show the design and implementation of:
 
@@ -22,7 +22,7 @@ This is not intended as a production SOC platform, but as a strong technical dem
 
 ---
 
-# 🧩 System Architecture
+## System Architecture
 
 The system follows a modular event-driven design:
 
@@ -47,7 +47,7 @@ Threat Events → Kafka (Redpanda) → Processor → Neo4j Graph Database
 
 ---
 
-# 🔁 What Was Implemented
+## What Was Implemented
 
 ### 1. End-to-End Streaming Pipeline
 
@@ -72,10 +72,12 @@ This allows SOC-style investigations such as:
 
 ---
 
-# 🛠 Data Model
+## Data Model
 
 Example event structure:
 
+```json
+```json
 {
   "event_id": "demo-1",
   "ts": "2026-01-21T01:10:00Z",
@@ -88,12 +90,14 @@ Example event structure:
   "country": "US",
   "channel": "email"
 }
+```
+```
 
 Fields are normalized and written into Neo4j with consistent relationships and properties.
 
 ---
 
-# 🚀 Running the Project Locally
+## Running the Project Locally
 
 ### Prerequisites
 
@@ -139,7 +143,7 @@ If the event appears, the full pipeline is working.
 
 ---
 
-# 📊 Static Portfolio Demo
+## Static Portfolio Demo
 
 To make the project easy to showcase without running infrastructure, a static demo dataset is included.
 
@@ -163,7 +167,7 @@ These files power a GitHub Pages frontend that demonstrates:
 
 ---
 
-# 🧪 Example Investigation Queries
+## Example Investigation Queries
 
 Find latest events:
 
@@ -191,7 +195,7 @@ RETURN i.value, count(e) as hits;
 
 ---
 
-# 📁 Repository Structure
+## Repository Structure
 
 ```
 ├── services/
@@ -207,7 +211,7 @@ RETURN i.value, count(e) as hits;
 
 ---
 
-# 🌟 What This Project Demonstrates
+## What This Project Demonstrates
 
 - Building distributed event pipelines
 - Working with Kafka-compatible systems
@@ -218,11 +222,11 @@ RETURN i.value, count(e) as hits;
 
 ---
 
-# 🚧 Future Improvements
+## Future Improvements
 
 Potential extensions:
 
-- Machine learning-based event scoring
+- Statistical event scoring
 - Real external threat feed ingestion
 - Advanced graph analytics
 - Alerting and notifications
@@ -231,7 +235,7 @@ Potential extensions:
 
 ---
 
-# 👤 Andre M.
+## Andre M.
 
 Built as a personal portfolio project to demonstrate backend engineering, data pipelines, and graph analytics skills.
 

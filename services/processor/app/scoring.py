@@ -1,7 +1,7 @@
 def risk_score(event: dict) -> float:
     """
     Lightweight 'online' scoring function.
-    You can later swap this with your real ML model scoring.
+    You can later swap this with your statistical risk scoring.
     """
     score = 0.0
 
